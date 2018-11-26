@@ -36,12 +36,13 @@
 #define ROS_ARDUINO_HARDWARE_SERIAL_H_
 #define _ROS_H_
 #include "ArduinoIncludes.h"
+#include <variant.h>
 
 #ifndef ROS_SERIAL
 #define ROS_SERIAL (P_COM3.serial2)
 #endif
 #ifndef ROS_BAUDRATE
-#define ROS_BAUDRATE 1000000
+#define ROS_BAUDRATE 57600
 //57600
 #endif
 class ArduinoHardwareSerial {
@@ -73,7 +74,10 @@ class ArduinoHardwareSerial {
     int read(){return iostream->read();};
     void write(uint8_t* data, int length){
       for(int i=0; i<length; i++)
+      {
+        while( !(iostream->availableForWrite()>0));
         iostream->write(data[i]);
+      }
     }
 
     unsigned long time(){return millis();}
@@ -89,7 +93,7 @@ class ArduinoHardwareSerial {
  
  namespace ros
  {
-   typedef NodeHandle_<ArduinoHardwareSerial> NodeHandleZRos;
+   typedef NodeHandle_<ArduinoHardwareSerial> NodeHandleZRos;// note usable, other library refers to NodeHandle
  }
 
 
