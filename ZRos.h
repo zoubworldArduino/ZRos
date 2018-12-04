@@ -75,7 +75,6 @@ class ArduinoHardwareSerial {
     void write(uint8_t* data, int length){
       for(int i=0; i<length; i++)
       {
-        while( !(iostream->availableForWrite()>0));
         iostream->write(data[i]);
       }
     }
