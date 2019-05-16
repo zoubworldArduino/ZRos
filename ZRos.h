@@ -35,16 +35,40 @@
 #ifndef ROS_ARDUINO_HARDWARE_SERIAL_H_
 #define ROS_ARDUINO_HARDWARE_SERIAL_H_
 #define _ROS_H_
-#include "ArduinoIncludes.h"
+//#include "ArduinoIncludes.h"
+
+
+#if ARDUINO>=100
+  #include <Arduino.h>  // Arduino 1.0
+#else
+  #include <WProgram.h>  // Arduino 0022
+#endif
+
+
 #include <variant.h>
 
-#ifndef ROS_SERIAL
-#define ROS_SERIAL (P_COM3.serial2)
-#endif
-#ifndef ROS_BAUDRATE
-#define ROS_BAUDRATE 57600
+#if defined(BOARD_ID_Pilo)
+   #define ROS_BAUDRATE 115200
+//HS230400
 //57600
+   #define ROS_SERIAL (P_COM3.serial2)
+ 
+#elif defined(BOARD_ID_Captor)
+  #define ROS_BAUDRATE 115200
+  #define ROS_SERIAL (P_COM0.serial2)
+#else
+#error not supported
 #endif
+
+#ifndef ROS_SERIAL
+  #error "Define ROS_SERIAL"
+#endif
+
+#ifndef ROS_BAUDRATE
+  #error "Define ROS_SERIAL"
+#endif
+
+
 class ArduinoHardwareSerial {
   public:
     ArduinoHardwareSerial(SERIAL_CLASS* io , long baud= ROS_BAUDRATE){
@@ -70,7 +94,7 @@ class ArduinoHardwareSerial {
     void init(){
       iostream->begin(baud_);
     }
-
+ 
     int read(){return iostream->read();};
     void write(uint8_t* data, int length){
       for(int i=0; i<length; i++)
